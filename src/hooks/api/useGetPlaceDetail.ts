@@ -1,7 +1,7 @@
 import {UseQueryOptions, useQuery} from 'react-query';
 import { APIResponse } from '../../interfaces/BaseApiResponse';
 import ax from '../../service/axios';
-import { PlaceInterface, ResponseGetPlaceDetailInterface } from '../../interfaces/interfaces';
+import { PlaceInterface } from '../../interfaces/interfaces';
 
 export const getPlaceDetail = async ({
   club_id,

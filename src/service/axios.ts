@@ -5,12 +5,12 @@ const ax = axios.create({
 });
 
 ax.interceptors.request.use(
-  async (configuration: any) => {
+  async (configuration) => {
     configuration.headers['Content-Type'] = 'application/json';
     // configuration.headers['x-api-key'] = Config.API_KEY;
     return configuration;
   },
-  (error: any) => {
+  (error) => {
     Promise.reject(error);
   },
 );
