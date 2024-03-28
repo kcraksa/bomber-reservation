@@ -22,6 +22,7 @@ function Dashboard() {
         <p className="header">Bomber web reservation</p>
         <p>{clubDetail?.data[0].name}</p>
         <p>{JSON.stringify(clubOperational?.data.operation)}</p>
+        <div className='p-16 h-16 bg-slate-200' />
       </header>
     </div>
   );
