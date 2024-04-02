@@ -4,9 +4,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import Dashboard from './page/Dashboard';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Reservation from './page/Reservation';
-import Login from './page/Login';
-import GuestReservation from './page/GuestReservation';
-import Register from './page/Register';
+import { Toaster } from 'react-hot-toast';
 export const App = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -24,11 +22,12 @@ export const App = () => {
         <Routes>
           <Route index element={<Dashboard />} />
           <Route path='/reservation' element={<Reservation />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/guest' element={<GuestReservation />} />
-          <Route path='/register' element={<Register />} />
+          <Route path='/login' element={<Reservation />} />
+          <Route path='/guest' element={<Reservation />} />
+          <Route path='/register' element={<Reservation />} />
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </QueryClientProvider>
   );
 };

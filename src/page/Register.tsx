@@ -86,10 +86,9 @@ function Register() {
                   }}
                   validationSchema={validationSchema}
                   onSubmit={(values, { setSubmitting }) => {
-                    setSubmitting(true);
                     useRegisterCustomer({
                       data: {
-                        firebase_id: 'asdadasdas',
+                        firebase_id: '',
                         username: values.email,
                         phone: values.customer_phone_number,
                         password: values.password,

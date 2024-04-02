@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGetPlaceOperational } from '../hooks/api/useGetPlaceOperational';
 import { useGetPlaceDetail } from '../hooks/api/useGetPlaceDetail';
 import { Datepicker } from "flowbite-react";
 import { Link, useNavigate } from 'react-router-dom';
+// import { useGetOperationalSchedule } from '../hooks/api/useGetOperationalSchedule';
+import { useGetTableByDate } from '../hooks/api/useGetTableByDate';
 
 function Dashboard() {
   const sampleClubId = 'afa92fcc-aaad-416e-b441-c4f858bbe696';
+  const currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
   const navigate = useNavigate();
   const { data: clubOperational } = useGetPlaceOperational({
     club_id: sampleClubId,
@@ -19,6 +22,23 @@ function Dashboard() {
       enabled: !!sampleClubId
     }
   });
+  // const { data: operationalSchedule } = useGetOperationalSchedule({
+  //   club_id: sampleClubId,
+  //   year_month: `${new Date().getFullYear()}-${new Date().getMonth()}`,
+  //   options: {
+  //     enabled: !!sampleClubId
+  //   }
+  // })
+  const { data: tableByDate } = useGetTableByDate({
+    club_id: sampleClubId,
+    year_month_day: currentDate,
+    options: {
+      enabled: !!sampleClubId
+    }
+  })
+
+  const [selectedTable, setSelectedTable] = useState<string>('');
+
   return (
     <div className="app">
       <header className="app-header">
@@ -106,78 +126,33 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
             <div className='text-base p-4 text-gray02 w-[20%] text-sm'>
               <div className='mb-2'>Date</div>
               <div className=''>
-                <Datepicker />
+                <Datepicker onChange={(e) => console.log(e)} />
               </div>
             </div>
             <div className='p-4'>
               <div className='mb-2 text-base'>Select Table</div>
               <div className='flex gap-6 flex-wrap'>
-                <div className='w-[32%] p-4 border border-gray01 rounded-lg flex gap-6'>
-                  <div className='bg-gray01 h-[115px] w-[115px]'></div>
-                  <div>
-                    <div className='font-bold text-base mb-4'>Table Dragon</div>
-                    <div className='text-sm'>Small table with a lot facilities</div>
-                    <ul className='text-sm list-disc ml-5'>
-                      <li>close to toilet</li>
-                      <li>best point of view</li>
-                      <li>near the security</li>
-                    </ul>
+                {tableByDate?.data?.table_list?.map((table) => (
+                  <div className={`w-[32%] p-4 border border-gray01 rounded-lg flex gap-6 cursor-pointer ${selectedTable === table.tableId ? 'border-2 shadow-md' : ''}`} 
+                    key={table.tableId} onClick={() => setSelectedTable(table.tableId)}>
+                    <div className='bg-gray01 h-[115px] w-[115px]'></div>
+                    <div>
+                      <div className='font-bold text-base mb-4'>{table.text}</div>
+                      <div className='text-sm'>Small table with a lot facilities</div>
+                      <ul className='text-sm list-disc ml-5'>
+                        {tableByDate?.data?.facilities_list?.map((facilities) => (
+                          <li key={facilities.facilitiesId}>{facilities.title}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-                <div className='w-[32%] p-4 border border-gray01 rounded-lg flex gap-6'>
-                  <div className='bg-gray01 h-[115px] w-[115px]'></div>
-                  <div>
-                    <div className='font-bold text-base mb-4'>Table Dragon</div>
-                    <div className='text-sm'>Small table with a lot facilities</div>
-                    <ul className='text-sm list-disc ml-5'>
-                      <li>close to toilet</li>
-                      <li>best point of view</li>
-                      <li>near the security</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className='w-[32%] p-4 border border-gray01 rounded-lg flex gap-6'>
-                  <div className='bg-gray01 h-[115px] w-[115px]'></div>
-                  <div>
-                    <div className='font-bold text-base mb-4'>Table Dragon</div>
-                    <div className='text-sm'>Small table with a lot facilities</div>
-                    <ul className='text-sm list-disc ml-5'>
-                      <li>close to toilet</li>
-                      <li>best point of view</li>
-                      <li>near the security</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className='w-[32%] p-4 border border-gray01 rounded-lg flex gap-6'>
-                  <div className='bg-gray01 h-[115px] w-[115px]'></div>
-                  <div>
-                    <div className='font-bold text-base mb-4'>Table Dragon</div>
-                    <div className='text-sm'>Small table with a lot facilities</div>
-                    <ul className='text-sm list-disc ml-5'>
-                      <li>close to toilet</li>
-                      <li>best point of view</li>
-                      <li>near the security</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className='w-[32%] p-4 border border-gray01 rounded-lg flex gap-6'>
-                  <div className='bg-gray01 h-[115px] w-[115px]'></div>
-                  <div>
-                    <div className='font-bold text-base mb-4'>Table Dragon</div>
-                    <div className='text-sm'>Small table with a lot facilities</div>
-                    <ul className='text-sm list-disc ml-5'>
-                      <li>close to toilet</li>
-                      <li>best point of view</li>
-                      <li>near the security</li>
-                    </ul>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
         <div className='w-full fixed bottom-0'>
-          <button className='bg-purple01 text-base font-bold py-4 w-full' onClick={() => navigate(`/reservation?id=${clubDetail?.data[0]?.id}`)}>Create Reservation</button>
+          <button className='bg-purple01 text-base font-bold py-4 w-full' onClick={() => navigate(`/reservation?id=${clubDetail?.data[0]?.id}&table=${selectedTable}&date=${currentDate}`)}>Create Reservation</button>
         </div>
       </header>
     </div>
@@ -185,3 +160,4 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
 }
 
 export default Dashboard;
+
