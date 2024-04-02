@@ -32,9 +32,10 @@ export interface PlaceInterface extends ResponseGetPlaceDetailInterface {
   category: string[];
   photos: PlacePhotoInterface[];
   latitude?: number;
-  longitude?: number;
+  longtitude?: number;
   categoryName: string;
   businessCategoryName: string;
+  phone: string;
 }
 
 export interface PlacePhotoInterface {
