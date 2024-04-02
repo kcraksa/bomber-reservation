@@ -2,19 +2,15 @@ import { APIResponse } from "../../interfaces/BaseApiResponse";
 import { ResponseGetPlaceDetailInterface } from "../../interfaces/interfaces";
 import ax from "../../service/axios";
 
-export const useRegisterCustomer = async ({
+export const useLoginCustomer = async ({
   data,
 }: {
   data: {
-    firebase_id?: string;
     username?: string;
-    phone?: string;
     password?: string;
-    email?: string;
-    photo_url?: string;
-    gender?: string;
+    phone?: string;
   };
 }): Promise<APIResponse<ResponseGetPlaceDetailInterface> | undefined> => {
-  const response = await ax.post(`app/global_api/customer_sign_up`, data);
+  const response = await ax.post(`app/global_api/customer_sign_in`, data);
   return response.data;
 };
