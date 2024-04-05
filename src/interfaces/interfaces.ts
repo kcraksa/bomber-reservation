@@ -5,6 +5,12 @@ export interface ResponseGetPlaceDetailInterface {
   categoryName: string;
 }
 
+export interface ResponseLogin {
+  email: string;
+  id: string;
+  username: string;
+}
+
 export interface ResponseTableByDateTableList {
   tableId: string;
   text: string;

@@ -1,8 +1,8 @@
 import { APIResponse } from "../../interfaces/BaseApiResponse";
-import { ResponseGetPlaceDetailInterface } from "../../interfaces/interfaces";
+import { ResponseLogin } from "../../interfaces/interfaces";
 import ax from "../../service/axios";
 
-export const useLoginCustomer = async ({
+export const login = async ({
   data,
 }: {
   data: {
@@ -10,7 +10,7 @@ export const useLoginCustomer = async ({
     password?: string;
     phone?: string;
   };
-}): Promise<APIResponse<ResponseGetPlaceDetailInterface> | undefined> => {
+}): Promise<APIResponse<ResponseLogin> | undefined> => {
   const response = await ax.post(`app/global_api/customer_sign_in`, data);
   return response.data;
 };

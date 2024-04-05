@@ -1,41 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import { useGetPlaceOperational } from '../hooks/api/useGetPlaceOperational';
 import { useGetPlaceDetail } from '../hooks/api/useGetPlaceDetail';
-import { Datepicker } from "flowbite-react";
+import { Datepicker, TextInput } from "flowbite-react";
 import { Link, useNavigate } from 'react-router-dom';
 // import { useGetOperationalSchedule } from '../hooks/api/useGetOperationalSchedule';
-import { useGetTableByDate } from '../hooks/api/useGetTableByDate';
+import { getTableByDate } from '../hooks/api/useGetTableByDate';
+import { format } from 'date-fns';
+import { APIResponse } from '../interfaces/BaseApiResponse';
+import { ResponseTableByDate } from '../interfaces/interfaces';
+import toast from 'react-hot-toast';
+import { useGetOperationalSchedule } from '../hooks/api/useGetOperationalSchedule';
+import CalendarIcon from '../icons/calendar';
 
 function Dashboard() {
   const sampleClubId = 'afa92fcc-aaad-416e-b441-c4f858bbe696';
-  const currentDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
   const navigate = useNavigate();
+
+  const [selectedDate, setSelectedDate] = useState(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)
+  const [tableByDate, setTableByDate] = useState<APIResponse<ResponseTableByDate>>()
+  const [showCalendar, setShowCalendar] = useState(false);
+
   const { data: clubOperational } = useGetPlaceOperational({
     club_id: sampleClubId,
     options: {
       enabled: !!sampleClubId
     }
   });
+
+  const {data: dataOperational} = useGetOperationalSchedule({
+    club_id: sampleClubId,
+    year_month: format(new Date(), 'Y-M')
+  })
+
   const { data: clubDetail } = useGetPlaceDetail({
     club_id: sampleClubId,
     options: {
       enabled: !!sampleClubId
     }
   });
-  // const { data: operationalSchedule } = useGetOperationalSchedule({
-  //   club_id: sampleClubId,
-  //   year_month: `${new Date().getFullYear()}-${new Date().getMonth()}`,
-  //   options: {
-  //     enabled: !!sampleClubId
-  //   }
-  // })
-  const { data: tableByDate } = useGetTableByDate({
-    club_id: sampleClubId,
-    year_month_day: currentDate,
-    options: {
-      enabled: !!sampleClubId
+
+  useEffect(() => {
+    const getDataTableByDate = async () => {
+      const dataByDate = await getTableByDate({club_id: sampleClubId, year_month_day: selectedDate});
+      setTableByDate(dataByDate)
     }
-  })
+
+    getDataTableByDate();
+  }, [selectedDate]);
 
   const [selectedTable, setSelectedTable] = useState<string>('');
 
@@ -59,8 +72,8 @@ function Dashboard() {
             )}            
           </div>
 
-          <div className='w-full bg-black01 rounded-lg p-5 flex justify-between gap-4 mb-5'>
-            <div className='flex justify-center gap-5 items-center'>
+          <div className='w-full bg-black01 rounded-lg p-5 flex lg:flex-row flex-col justify-between gap-4 mb-5'>
+            <div className='flex lg:justify-center gap-5 items-center'>
               {clubDetail?.data[0]?.logo && (
                 <div className='bg-gray01 w-[80px] h-[80px]'></div>
               )}
@@ -69,7 +82,7 @@ function Dashboard() {
                 <div className='text-sm'>{clubDetail?.data[0]?.address}</div>
               </div>
             </div>
-            <div className='flex justify-center items-center gap-5'>
+            <div className='flex lg:justify-center items-center gap-5'>
               <Link to={`tel:${clubDetail?.data[0]?.phone}`} target='_blank'>
                 <img src='src/assets/images/phone.svg' width={44} height={44} alt='Phone Icon' />
               </Link>
@@ -79,17 +92,17 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className='w-full bg-black01 rounded-lg p-5 text-start mb-5'>
-            <div className='flex items-center'>
+          <div className='w-full bg-black01 flex flex-col rounded-lg p-5 text-start mb-5'>
+            <div className='flex items-center order-1'>
               <div>
                 <img src='src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
               </div>
               <div className='text-base font-bold'>About {clubDetail?.data[0]?.name}</div>
             </div>
-            <div className='text-base p-4 text-gray02' dangerouslySetInnerHTML={{ __html: clubOperational?.data?.about ?? '-' }} />
-            <div className='flex p-4 gap-6'>
+            <div className='text-base p-4 text-gray02 lg:order-2 order-3' dangerouslySetInnerHTML={{ __html: clubOperational?.data?.about ?? '-' }} />
+            <div className='flex p-4 gap-6 lg:order-last order-2'>
               {clubOperational?.data?.features?.map((feature) => (
-                <div className='border border-white rounded-lg cursor-pointer p-3 text-base' key={feature.title}>{feature.title}</div>
+                <div className='border border-white rounded-lg cursor-pointer p-3 lg:text-base text-sm' key={feature.title}>{feature.title}</div>
               ))}
             </div>
           </div>
@@ -123,17 +136,44 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
               </div>
               <div className='text-base font-bold'>Reservation</div>
             </div>
-            <div className='text-base p-4 text-gray02 w-[20%] text-sm'>
+            <div className='text-base p-4 text-gray02 lg:w-[20%] text-sm'>
               <div className='mb-2'>Date</div>
               <div className=''>
-                <Datepicker onChange={(e) => console.log(e)} />
+                <TextInput 
+                  id="date" 
+                  type="text" 
+                  readOnly 
+                  rightIcon={CalendarIcon} 
+                  placeholder="select date" 
+                  style={{ background: '#221F26', border: 'none', color: '#fff' }} 
+                  onFocus={() => setShowCalendar(!showCalendar)}
+                  value={format(selectedDate, "E, MMM d, yyyy")}
+                />
+                {showCalendar && (
+                  <Calendar 
+                    tileDisabled={(e) => {
+                      const date = format(e.date, 'Y-MM-dd');
+                      dataOperational?.data?.forEach((ops) => {
+                        if (date === ops.date && (ops.club_table_full_book === true || ops.club_operational_day === false)) {
+                          return true
+                        }
+                        return false;
+                      })
+                      return false;
+                    }}
+                    onChange={(e) => {
+                      setSelectedDate(format(e?.toString() ?? '', 'Y-M-d'));
+                      setShowCalendar(false);
+                    }}
+                  />
+                )}
               </div>
             </div>
             <div className='p-4'>
               <div className='mb-2 text-base'>Select Table</div>
               <div className='flex gap-6 flex-wrap'>
                 {tableByDate?.data?.table_list?.map((table) => (
-                  <div className={`w-[32%] p-4 border border-gray01 rounded-lg flex gap-6 cursor-pointer ${selectedTable === table.tableId ? 'border-2 shadow-md' : ''}`} 
+                  <div className={`lg:w-[32%] p-4 border ${selectedTable === table.tableId ? 'border-purple01' : 'border-gray01'} rounded-lg flex gap-6 cursor-pointer ${selectedTable === table.tableId ? 'border-2 shadow-md' : ''}`} 
                     key={table.tableId} onClick={() => setSelectedTable(table.tableId)}>
                     <div className='bg-gray01 h-[115px] w-[115px]'></div>
                     <div>
@@ -152,7 +192,13 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
           </div>
         </div>
         <div className='w-full fixed bottom-0'>
-          <button className='bg-purple01 text-base font-bold py-4 w-full' onClick={() => navigate(`/reservation?id=${clubDetail?.data[0]?.id}&table=${selectedTable}&date=${currentDate}`)}>Create Reservation</button>
+          <button className='bg-purple01 text-base font-bold py-4 w-full' onClick={() => {
+            if (!selectedTable) {
+              toast.error("Choose table first");
+              return false;
+            }
+            navigate(`/reservation?id=${clubDetail?.data[0]?.id}&table=${selectedTable}&date=${selectedDate}`)
+          }}>Create Reservation</button>
         </div>
       </header>
     </div>
