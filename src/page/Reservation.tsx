@@ -116,10 +116,9 @@ function Reservation() {
                     customer_phone_number: '',
                   }}
                   validationSchema={validationSchema}
-                  onSubmit={(values, { setSubmitting }) => {
-                    setSubmitting(true);
+                  onSubmit={async (values) => {
                     if (params.pathname === '/register') {
-                      useRegisterCustomer({
+                      await useRegisterCustomer({
                         data: {
                           firebase_id: '',
                           username: values.email,
@@ -132,16 +131,16 @@ function Reservation() {
                       })
                     }
                     if (params.pathname === '/login') {
-                      login({
+                      await login({
                         data: {
                           password: values.password,
                           phone: values.customer_phone_number,
                         }
-                      }).then((resp) => {
+                      }).then(async (resp) => {
 
                         const tableData = dataTable?.data?.table_list?.filter((table) => table.tableId === queryParam.get("table")) ?? [];
                       
-                        usePostOrder({
+                        await usePostOrder({
                           data: {
                             customer_id: resp?.data.id ?? "",
                             club_id: queryParam.get("id") ?? '-',
@@ -172,7 +171,7 @@ function Reservation() {
                       });
                     }
                     if (params.pathname === '/guest') {
-                      usePostGuestReservation({
+                      await usePostGuestReservation({
                         data: {
                           club_id: queryParam.get("id") ?? "",
                           name: values.name,
@@ -184,10 +183,9 @@ function Reservation() {
                         toast.success(resp?.message ?? "Success");                        
                       })
                     }
-                    setSubmitting(false);
                   }}
                 >
-                  {() => (
+                  {({isSubmitting}) => (
                     <Form className='w-full flex flex-col items-start'>
                       {params.pathname !== '/login' && (
                         <div className='flex w-full flex-col items-start p-3'>
@@ -219,15 +217,26 @@ function Reservation() {
                       <div className='flex w-full flex-col items-start p-3 gap-3'>
                         {params.pathname === '/reservation' ? (
                           <>
-                            <button className='bg-purple01 w-full py-3 rounded-lg text-base' type='button' onClick={() => navigate(`/login${params.search}`)}>Login</button>
+                            <button className='bg-purple01 w-full py-3 rounded-lg text-base' type='button' onClick={(e) => {
+                              navigate(`/login${params.search}`);
+                              e.preventDefault();
+                            }}>Login</button>
                             <button className='bg-orange01 w-full py-3 rounded-lg text-base' type='button'>Login using apps</button>
-                            <button className='border border-purple01 w-full py-3 rounded-lg text-base' type='button' onClick={() => navigate(`/guest${params.search}`)}>Reservation as guest</button>
+                            <button className='border border-purple01 w-full py-3 rounded-lg text-base' type='button' onClick={(e) => {
+                              navigate(`/guest${params.search}`);
+                              e.preventDefault();
+                            }}>Reservation as guest</button>
                           </>
                         ) : (
-                          <button className='bg-purple01 w-full py-3 rounded-lg text-base' type='submit'>
-                            {params.pathname === '/login' && 'Login'}
-                            {params.pathname === '/register' && 'Register'}
-                            {params.pathname === '/guest' && 'Create Reservation'}
+                          <button className='bg-purple01 w-full py-3 rounded-lg text-base gap-3' type='submit'>
+                            {isSubmitting ? "Processing..." : (
+                              <span>
+                                {params.pathname === '/login' && 'Login'}
+                                {params.pathname === '/register' && 'Register'}
+                                {params.pathname === '/guest' && 'Create Reservation'}
+                              </span>
+                            )}
+                            
                           </button>
                         )}
 
