@@ -3,7 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useGetPlaceOperational } from '../hooks/api/useGetPlaceOperational';
 import { useGetPlaceDetail } from '../hooks/api/useGetPlaceDetail';
-import { Datepicker, TextInput } from "flowbite-react";
+import { TextInput } from "flowbite-react";
 import { Link, useNavigate } from 'react-router-dom';
 // import { useGetOperationalSchedule } from '../hooks/api/useGetOperationalSchedule';
 import { getTableByDate } from '../hooks/api/useGetTableByDate';
@@ -173,9 +173,9 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
               <div className='mb-2 text-base'>Select Table</div>
               <div className='flex gap-6 flex-wrap'>
                 {tableByDate?.data?.table_list?.map((table) => (
-                  <div className={`lg:w-[32%] p-4 border ${selectedTable === table.tableId ? 'border-purple01' : 'border-gray01'} rounded-lg flex gap-6 cursor-pointer ${selectedTable === table.tableId ? 'border-2 shadow-md' : ''}`} 
+                  <div className={`lg:w-[32%] p-4 border ${selectedTable === table.tableId ? 'border-purple01' : 'border-gray01'} rounded-lg flex lg:flex-row flex-col gap-6 cursor-pointer ${selectedTable === table.tableId ? 'border-1' : ''}`} 
                     key={table.tableId} onClick={() => setSelectedTable(table.tableId)}>
-                    <div className='bg-gray01 h-[115px] w-[115px]'></div>
+                    <div className='bg-gray01 h-[115px] lg:w-[115px]'></div>
                     <div>
                       <div className='font-bold text-base mb-4'>{table.text}</div>
                       <div className='text-sm'>Small table with a lot facilities</div>
