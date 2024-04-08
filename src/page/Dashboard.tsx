@@ -4,7 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import { useGetPlaceOperational } from '../hooks/api/useGetPlaceOperational';
 import { useGetPlaceDetail } from '../hooks/api/useGetPlaceDetail';
 import { TextInput } from "flowbite-react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 // import { useGetOperationalSchedule } from '../hooks/api/useGetOperationalSchedule';
 import { getTableByDate } from '../hooks/api/useGetTableByDate';
 import { format } from 'date-fns';
@@ -13,10 +13,13 @@ import { ResponseTableByDate } from '../interfaces/interfaces';
 import toast from 'react-hot-toast';
 import { useGetOperationalSchedule } from '../hooks/api/useGetOperationalSchedule';
 import CalendarIcon from '../icons/calendar';
+import { useTranslation } from 'react-i18next';
 
 function Dashboard() {
   const sampleClubId = 'afa92fcc-aaad-416e-b441-c4f858bbe696';
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const params = useParams();
 
   const [selectedDate, setSelectedDate] = useState(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`)
   const [tableByDate, setTableByDate] = useState<APIResponse<ResponseTableByDate>>()
@@ -84,10 +87,10 @@ function Dashboard() {
             </div>
             <div className='flex lg:justify-center items-center gap-5'>
               <Link to={`tel:${clubDetail?.data[0]?.phone}`} target='_blank'>
-                <img src='src/assets/images/phone.svg' width={44} height={44} alt='Phone Icon' />
+                <img src='/src/assets/images/phone.svg' width={44} height={44} alt='Phone Icon' />
               </Link>
               <Link to={`https://maps.google.com/?q=${clubDetail?.data[0]?.latitude},${clubDetail?.data[0]?.longtitude}`} target='_blank'>
-                <img src='src/assets/images/location.svg' width={44} height={44} alt='Location Icon' />
+                <img src='/src/assets/images/location.svg' width={44} height={44} alt='Location Icon' />
               </Link>
             </div>
           </div>
@@ -95,9 +98,9 @@ function Dashboard() {
           <div className='w-full bg-black01 flex flex-col rounded-lg p-5 text-start mb-5'>
             <div className='flex items-center order-1'>
               <div>
-                <img src='src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
+                <img src='/src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
               </div>
-              <div className='text-base font-bold'>About {clubDetail?.data[0]?.name}</div>
+              <div className='text-base font-bold'>{t("common.about")} {clubDetail?.data[0]?.name}</div>
             </div>
             <div className='text-base p-4 text-gray02 lg:order-2 order-3' dangerouslySetInnerHTML={{ __html: clubOperational?.data?.about ?? '-' }} />
             <div className='flex p-4 gap-6 lg:order-last order-2'>
@@ -110,21 +113,20 @@ function Dashboard() {
           <div className='w-full bg-black01 rounded-lg p-5 text-start mb-5'>
             <div className='flex items-center'>
               <div>
-                <img src='src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
+                <img src='/src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
               </div>
-              <div className='text-base font-bold'>Notes</div>
+              <div className='text-base font-bold'>{t("common.notes")}</div>
             </div>
             <div className='flex p-4 gap-6 text-base'>
               <ul>
-                <li className='my-3'>🔺Friday and Saturday reservations are for BAR seating only until 11:30 pm.</li>
-                <li className='my-3'>🔺For private events or special requests, please contact us at 0966-331-033 (WhatsApp) or message us on social media.</li>
-                <li className='my-3'>🔺No entry for individuals under 18 years old.</li>
-                <li className='my-3'>🔺Reservations will be held for a maximum of 10 mins past their scheduled time. Arrivals later than that may result in forfeiture of your reservation. Thanks for your understanding.</li>
-                <li className='my-3'>🔺Admission is free (excluding special events & NYE).</li>
-                <li className='my-3'>🔺Check our social media for updates on operating hours during special holidays and vacations.</li>
-                <li className='my-3'>📌DRESS TO IMPRESS - No casual attire/workout wear/slippers/sandals/open-toed flats.</li>
-                <li className='my-3'>📌KOR reserves the right to refuse entry to anyone at our sole discretion. Admission policies are subject to change without notice.
-KOR is a private company/venue that openly accepts guests from all ethnic groups and cultures. We do not discriminate based on age, gender, sexual orientation, faith, race, political affiliation, disability, or pregnancy. All guests are treated equally and respectfully.</li>
+                <li className='my-3'>🔺{t("notes.note_1")}</li>
+                <li className='my-3'>🔺{t("notes.note_2")}</li>
+                <li className='my-3'>🔺{t("notes.note_3")}</li>
+                <li className='my-3'>🔺{t("notes.note_4")}</li>
+                <li className='my-3'>🔺{t("notes.note_5")}</li>
+                <li className='my-3'>🔺{t("notes.note_6")}</li>
+                <li className='my-3'>📌{t("notes.note_7")}</li>
+                <li className='my-3'>📌{t("notes.note_8")}</li>
               </ul>
             </div>
           </div>
@@ -132,12 +134,12 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
           <div className='w-full bg-black01 rounded-lg p-5 text-start mb-5'>
             <div className='flex items-center'>
               <div>
-                <img src='src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
+                <img src='/src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
               </div>
-              <div className='text-base font-bold'>Reservation</div>
+              <div className='text-base font-bold'>{t("common.reservation")}</div>
             </div>
             <div className='text-base p-4 text-gray02 lg:w-[20%] text-sm'>
-              <div className='mb-2'>Date</div>
+              <div className='mb-2'>{t("common.date")}</div>
               <div className=''>
                 <TextInput 
                   id="date" 
@@ -170,7 +172,7 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
               </div>
             </div>
             <div className='p-4'>
-              <div className='mb-2 text-base'>Select Table</div>
+              <div className='mb-2 text-base'>{t("common.select_table")}</div>
               <div className='flex gap-6 flex-wrap'>
                 {tableByDate?.data?.table_list?.map((table) => (
                   <div className={`lg:w-[32%] p-4 border ${selectedTable === table.tableId ? 'border-purple01' : 'border-gray01'} rounded-lg flex lg:flex-row flex-col gap-6 cursor-pointer ${selectedTable === table.tableId ? 'border-1' : ''}`} 
@@ -178,7 +180,7 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
                     <div className='bg-gray01 h-[115px] lg:w-[115px]'></div>
                     <div>
                       <div className='font-bold text-base mb-4'>{table.text}</div>
-                      <div className='text-sm'>Small table with a lot facilities</div>
+                      <div className='text-sm'>{t("common.facilities")}</div>
                       <ul className='text-sm list-disc ml-5'>
                         {tableByDate?.data?.facilities_list?.map((facilities) => (
                           <li key={facilities.facilitiesId}>{facilities.title}</li>
@@ -194,11 +196,11 @@ KOR is a private company/venue that openly accepts guests from all ethnic groups
         <div className='w-full fixed bottom-0'>
           <button className='bg-purple01 text-base font-bold py-4 w-full' onClick={() => {
             if (!selectedTable) {
-              toast.error("Choose table first");
+              toast.error(t("common.choose_table"));
               return false;
             }
-            navigate(`/reservation?id=${clubDetail?.data[0]?.id}&table=${selectedTable}&date=${selectedDate}`)
-          }}>Create Reservation</button>
+            navigate(`/${params.locale}/reservation?id=${clubDetail?.data[0]?.id}&table=${selectedTable}&date=${selectedDate}`)
+          }}>{t("common.create_reservation")}</button>
         </div>
       </header>
     </div>

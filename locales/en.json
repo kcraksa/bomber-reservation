@@ -1,0 +1,42 @@
+{
+  "common": {
+    "about": "About",
+    "notes": "Notes",
+    "reservation": "Reservation",
+    "date": "Date",
+    "select_table": "Select Table",
+    "facilities": "Small table with a lot facilities",
+    "create_reservation": "Create Reservation",
+    "processing": "Processing",
+    "want_tobe_member": "Want to be a member ?",
+    "register_here": "Register here",
+    "change_mind": "Change your mind ?",
+    "back_to_login": "back to login page",
+    "order_success": "Order success!",
+    "success": "Success",
+    "choose_table": "Choose table first",
+    "error": "An error has occured"
+  },
+  "form": {
+    "register": "Register new account",
+    "register2": "Register",
+    "customer_info": "Customer Information",
+    "email": "Email",
+    "name": "Name",
+    "password": "Password",
+    "customer_phone": "Customer Phone Number",
+    "login": "Login",
+    "login_apps": "Login using apps",
+    "reservation_guest": "Reservation as guest"
+  },
+  "notes": {
+    "note_1": "Friday and Saturday reservations are for BAR seating only until 11:30 pm.",
+    "note_2": "For private events or special requests, please contact us at 0966-331-033 (WhatsApp) or message us on social media.",
+    "note_3": "No entry for individuals under 18 years old.",
+    "note_4": "Reservations will be held for a maximum of 10 mins past their scheduled time. Arrivals later than that may result in forfeiture of your reservation. Thanks for your understanding.",
+    "note_5": "Admission is free (excluding special events & NYE).",
+    "note_6": "Check our social media for updates on operating hours during special holidays and vacations.",
+    "note_7": "DRESS TO IMPRESS - No casual attire/workout wear/slippers/sandals/open-toed flats.",
+    "note_8": "KOR reserves the right to refuse entry to anyone at our sole discretion. Admission policies are subject to change without notice. KOR is a private company/venue that openly accepts guests from all ethnic groups and cultures. We do not discriminate based on age, gender, sexual orientation, faith, race, political affiliation, disability, or pregnancy. All guests are treated equally and respectfully."
+  }
+}

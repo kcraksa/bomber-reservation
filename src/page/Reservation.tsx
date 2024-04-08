@@ -11,11 +11,14 @@ import { usePostOrder } from '../hooks/api/usePostOrder';
 import toast from 'react-hot-toast';
 import { ResponseTableByDateTableList } from '../interfaces/interfaces';
 import { usePostGuestReservation } from '../hooks/api/usePostGuestReservation';
+import { useTranslation } from 'react-i18next';
 
 function Reservation() {
   const navigate = useNavigate();
   const params = useLocation();
+  const {t} = useTranslation();
   const queryParam = new URLSearchParams(params.search);
+  const [, locale, path] = params.pathname.split('/');
 
   const [table, setTable] = useState<ResponseTableByDateTableList[]>([]);
 
@@ -60,7 +63,7 @@ function Reservation() {
               <div className='bg-black01 rounded-lg p-2 flex items-center justify-between'>
                 <div className='flex items-center'>
                   <div>                  
-                    <img src='src/assets/images/calendar.svg' width={44} height={44} alt='Calendar Icon' />
+                    <img src='/src/assets/images/calendar.svg' width={44} height={44} alt='Calendar Icon' />
                   </div>
                   <div className='text-sm ml-4'>
                     {format(queryParam.get("date") ?? new Date(), "E, MMM d, yyyy")}
@@ -68,7 +71,7 @@ function Reservation() {
                 </div>
                 <div className='flex items-center mr-5'>
                   <div>                  
-                    <img src='src/assets/images/table.svg' width={44} height={44} alt='Calendar Icon' />
+                    <img src='/src/assets/images/table.svg' width={44} height={44} alt='Calendar Icon' />
                   </div>
                   <div className='text-sm ml-4'>
                     {table[0]?.text}
@@ -89,10 +92,10 @@ function Reservation() {
                 </div>
                 <div className='flex lg:justify-center items-center gap-5'>
                   <Link to={`tel:${clubDetail?.data[0]?.phone}`} target='_blank'>
-                    <img src='src/assets/images/phone.svg' width={44} height={44} alt='Phone Icon' />
+                    <img src='/src/assets/images/phone.svg' width={44} height={44} alt='Phone Icon' />
                   </Link>
                   <Link to={`https://maps.google.com/?q=${clubDetail?.data[0]?.latitude},${clubDetail?.data[0]?.longtitude}`} target='_blank'>
-                    <img src='src/assets/images/location.svg' width={44} height={44} alt='Location Icon' />
+                    <img src='/src/assets/images/location.svg' width={44} height={44} alt='Location Icon' />
                   </Link>
                 </div>
               </div>
@@ -100,12 +103,12 @@ function Reservation() {
               <div className='bg-black01 rounded-lg p-3'>
                 <div className='flex items-center'>
                   <div>
-                    <img src='src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
+                    <img src='/src/assets/images/electric.svg' width={44} height={44} alt='Electric' />
                   </div>
-                  {params.pathname === '/register' ? (
-                    <div className='text-base font-bold'>Register new account</div>
+                  {path === 'register' ? (
+                    <div className='text-base font-bold'>{t("form.register")}</div>
                   ) : (
-                    <div className='text-base font-bold'>Customer Information</div>
+                    <div className='text-base font-bold'>{t("form.customer_info")}</div>
                   )}
                 </div>
                 <Formik
@@ -117,7 +120,7 @@ function Reservation() {
                   }}
                   validationSchema={validationSchema}
                   onSubmit={async (values) => {
-                    if (params.pathname === '/register') {
+                    if (path === 'register') {
                       await useRegisterCustomer({
                         data: {
                           firebase_id: '',
@@ -130,7 +133,7 @@ function Reservation() {
                         }
                       })
                     }
-                    if (params.pathname === '/login') {
+                    if (path === 'login') {
                       await login({
                         data: {
                           password: values.password,
@@ -166,11 +169,11 @@ function Reservation() {
                           }
                         }).then(() => {
                           navigate('/');
-                          toast.success("Order success!");
+                          toast.success(t("common.order_success"));
                         })
                       });
                     }
-                    if (params.pathname === '/guest') {
+                    if (path === 'guest') {
                       await usePostGuestReservation({
                         data: {
                           club_id: queryParam.get("id") ?? "",
@@ -180,60 +183,60 @@ function Reservation() {
                         }
                       }).then((resp) => {
                         navigate('/');
-                        toast.success(resp?.message ?? "Success");                        
+                        toast.success(resp?.message ?? t("common.success"));                        
                       })
                     }
                   }}
                 >
                   {({isSubmitting}) => (
                     <Form className='w-full flex flex-col items-start'>
-                      {params.pathname !== '/login' && (
+                      {path !== 'login' && (
                         <div className='flex w-full flex-col items-start p-3'>
-                          <div className='text-sm mb-3'>Email</div>
+                          <div className='text-sm mb-3'>{t("form.email")}</div>
                           <Field type='email' name='email' placeholder='email' className='w-full rounded-lg bg-[#000]' />
                           <ErrorMessage name='email' component='div' className='text-red-500 text-sm' />
                         </div>
                       )}
-                      {(params.pathname === '/guest') ? (
+                      {(path === 'guest') ? (
                         <div className={`flex w-full flex-col items-start p-3 mb-3`}>
-                          <div className='text-sm mb-3'>Name</div>
+                          <div className='text-sm mb-3'>{t("form.name")}</div>
                           <Field type='text' name='name' placeholder='name' className='w-full rounded-lg bg-[#000]' />
                           <ErrorMessage name='name' component='div' className='text-red-500 text-sm' />
                         </div>
                       ) : (
                         <div className='flex w-full flex-col items-start p-3'>
-                          <div className='text-sm mb-3'>Password</div>
+                          <div className='text-sm mb-3'>{t("form.password")}</div>
                           <Field type='password' name='password' placeholder='password' className='w-full rounded-lg bg-[#000]' />
                           <ErrorMessage name='password' component='div' className='text-red-500 text-sm' />
                         </div>
                       )}
-                      {(params.pathname !== '/reservation') && (
-                        <div className={`flex w-full flex-col items-start p-3 mb-3 ${params.pathname === '/login' && 'order-first'}`}>
-                          <div className='text-sm mb-3'>Customer Phone Number</div>
+                      {(path !== 'reservation') && (
+                        <div className={`flex w-full flex-col items-start p-3 mb-3 ${path === 'login' && 'order-first'}`}>
+                          <div className='text-sm mb-3'>{t("form.customer_phone")}</div>
                           <Field type='text' name='customer_phone_number' placeholder='customer phone number' className='w-full rounded-lg bg-[#000]' />
                           <ErrorMessage name='customer_phone_number' component='div' className='text-red-500 text-sm' />
                         </div>
                       )}
                       <div className='flex w-full flex-col items-start p-3 gap-3'>
-                        {params.pathname === '/reservation' ? (
+                        {path === 'reservation' ? (
                           <>
                             <button className='bg-purple01 w-full py-3 rounded-lg text-base' type='button' onClick={(e) => {
-                              navigate(`/login${params.search}`);
+                              navigate(`/${locale}/login${params.search}`);
                               e.preventDefault();
-                            }}>Login</button>
-                            <button className='bg-orange01 w-full py-3 rounded-lg text-base' type='button'>Login using apps</button>
+                            }}>{t("form.login")}</button>
+                            <button className='bg-orange01 w-full py-3 rounded-lg text-base' type='button'>{t("form.login_apps")}</button>
                             <button className='border border-purple01 w-full py-3 rounded-lg text-base' type='button' onClick={(e) => {
-                              navigate(`/guest${params.search}`);
+                              navigate(`/${locale}/guest${params.search}`);
                               e.preventDefault();
-                            }}>Reservation as guest</button>
+                            }}>{t("form.reservation_guest")}</button>
                           </>
                         ) : (
                           <button className='bg-purple01 w-full py-3 rounded-lg text-base gap-3' type='submit'>
-                            {isSubmitting ? "Processing..." : (
+                            {isSubmitting ? `${t("common.processing")}...` : (
                               <span>
-                                {params.pathname === '/login' && 'Login'}
-                                {params.pathname === '/register' && 'Register'}
-                                {params.pathname === '/guest' && 'Create Reservation'}
+                                {path === 'login' && t("form.login")}
+                                {path === 'register' && t("form.register2")}
+                                {path === 'guest' && t("common.create_reservation")}
                               </span>
                             )}
                             
@@ -246,10 +249,10 @@ function Reservation() {
                   )}
                 </Formik>
                 <div className='flex w-full flex-col items-end p-3 gap-3'>                  
-                  {params.pathname === '/reservation' ? (
-                    <div className='text-sm'>Want to be a member ? <button className='text-purple01' onClick={() => navigate(`/register${params.search}`)}>Register here</button></div>
+                  {path === 'reservation' ? (
+                    <div className='text-sm'>{t("common.want_tobe_member")} <button className='text-purple01' onClick={() => navigate(`/${locale}/register${params.search}`)}>{t("common.register_here")}</button></div>
                   ) : (
-                    <div className='text-sm'>Change your mind ? <button className='text-purple01' onClick={() => navigate(`/reservation${params.search}`)}>back to login page</button></div>
+                    <div className='text-sm'>{t("common.change_mind")} <button className='text-purple01' onClick={() => navigate(`/${locale}/reservation${params.search}`)}>{t("common.back_to_login")}</button></div>
                   )}                  
                 </div>
               </div>
